@@ -46,20 +46,22 @@ Nhân viên vận hành	     Quản lý, giám sát và hỗ trợ xử lý chuy
 Bộ phận kỹ thuật/IT	     Quản lý, bảo trì và đảm bảo hệ thống hoạt động ổn định
 Cổng thanh toán	         Xử lý các giao dịch thanh toán điện tử
 Dịch vụ thông báo	       Gửi thông báo đến khách hàng và tài xế
+
 ```mermaid
 quadrantChart
     title Stakeholder Matrix - CAB System
-    x-axis Mức độ quan tâm thấp --> Mức độ quan tâm cao
-    y-axis Mức độ ảnh hưởng thấp --> Mức độ ảnh hưởng cao
-    quadrant-1 Quản lý chặt chẽ
-    quadrant-2 Giữ hài lòng
-    quadrant-3 Theo dõi
-    quadrant-4 Giữ thông tin
-    "Khách hàng": [0.75, 0.55]
-    "Tài xế": [0.70, 0.60]
-    "Nhân viên vận hành": [0.85, 0.85]
-    "Quản lý/Ban lãnh đạo": [0.80, 0.95]
-    "Bộ phận IT": [0.55, 0.75]
-    "Cổng thanh toán": [0.30, 0.50]
-    "Dịch vụ thông báo": [0.25, 0.35]
+    x-axis "Interest thấp" --> "Interest cao"
+    y-axis "Power thấp" --> "Power cao"
+
+    quadrant-1 "Manage Closely"
+    quadrant-2 "Keep Satisfied"
+    quadrant-3 "Monitor"
+    quadrant-4 "Keep Informed"
+
+    "Management": [0.90, 0.90]
+    "Operations Staff": [0.85, 0.80]
+    "Customer": [0.85, 0.30]
+    "Driver": [0.80, 0.35]
+    "Payment Provider": [0.55, 0.50]
+    "Notification Provider": [0.50, 0.45]
 ```
