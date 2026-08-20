@@ -575,3 +575,48 @@ Bước 12: đặc tả usecase
 | **Luồng chính** | 1. Hệ thống nhận yêu cầu đặt chuyến.<br>2. Tìm tài xế đang Available.<br>3. Ưu tiên tài xế phù hợp.<br>4. Gửi yêu cầu nhận chuyến.<br>5. Tài xế nhận chuyến.<br>6. Hệ thống xác nhận phân công.<br>7. Thông báo cho khách hàng. |
 | **Luồng ngoại lệ** | Tài xế từ chối/không phản hồi → tìm tài xế khác.<br>Không còn tài xế phù hợp → thông báo cho khách hàng. |
 
+Bước 13: Những tiêu chí chấp nhận (AC) là tập hợp các điều kiện tính năng phải đáp ứng để giúp ng làm phần mềm xác định khi nào yêu cầu kết thúc và nghệm thu> Hãy thiết kế ra các AC
+## 13. Acceptance Criteria – Tiêu chí chấp nhận
+
+| Mã AC | Tính năng | Tiêu chí chấp nhận |
+|---|---|---|
+| **AC01** | Đặt chuyến xe | Khi khách hàng nhập đầy đủ điểm đón, điểm đến và thời gian đón hợp lệ, hệ thống phải cho phép xác nhận và tạo chuyến xe thành công. |
+| **AC02** | Kiểm tra thông tin | Khi khách hàng nhập thiếu hoặc sai thông tin đặt chuyến, hệ thống phải hiển thị thông báo lỗi và không tạo chuyến. |
+| **AC03** | Hủy chuyến | Khi chuyến đang ở trạng thái cho phép hủy, khách hàng xác nhận hủy thì hệ thống phải cập nhật chuyến thành trạng thái đã hủy. |
+| **AC04** | Tìm tài xế | Khi có yêu cầu đặt xe, hệ thống phải tự động tìm các tài xế đang Available và phù hợp với yêu cầu chuyến xe. |
+| **AC05** | Nhận chuyến | Khi tài xế đang Available và nhận yêu cầu trong thời gian quy định, hệ thống phải xác nhận tài xế nhận chuyến thành công. |
+| **AC06** | Phân công tài xế | Khi tài xế nhận chuyến, hệ thống phải ghi nhận tài xế được phân công và thông báo thông tin tài xế cho khách hàng. |
+| **AC07** | Không tìm được tài xế | Khi hệ thống không tìm được tài xế phù hợp sau thời gian quy định, hệ thống phải thông báo cho khách hàng và cập nhật trạng thái yêu cầu. |
+| **AC08** | Theo dõi chuyến | Khi chuyến đang hoạt động, khách hàng phải xem được trạng thái hiện tại và thông tin tài xế được phân công. |
+| **AC09** | Thực hiện chuyến | Tài xế phải có thể cập nhật lần lượt các trạng thái nhận chuyến, đã đến điểm đón, bắt đầu chuyến và hoàn thành chuyến. |
+| **AC10** | Tính cước | Khi chuyến được cập nhật hoàn thành, hệ thống phải tự động tính cước theo thông tin chuyến và quy định giá hiện hành. |
+| **AC11** | Thanh toán | Sau khi có cước phí, khách hàng phải có thể lựa chọn thanh toán bằng tiền mặt hoặc phương thức thanh toán điện tử. |
+| **AC12** | Thanh toán thất bại | Khi giao dịch điện tử thất bại, hệ thống phải ghi nhận trạng thái thất bại, thông báo cho khách hàng và cho phép thực hiện thanh toán lại. |
+| **AC13** | Quản lý khách hàng | Nhân viên vận hành phải có thể thêm, xem, cập nhật và tìm kiếm thông tin khách hàng trong hệ thống. |
+| **AC14** | Quản lý tài xế | Nhân viên vận hành phải có thể thêm, xem, cập nhật thông tin và theo dõi trạng thái hoạt động của tài xế. |
+| **AC15** | Quản lý vận hành | Nhân viên vận hành phải có thể theo dõi các chuyến xe đang diễn ra, phát hiện và ghi nhận kết quả xử lý sự cố. |
+| **AC16** | Thông báo | Khi phát sinh các sự kiện như đặt xe, nhận chuyến, thay đổi trạng thái hoặc thanh toán, hệ thống phải gửi thông báo đến đúng đối tượng. |
+| **AC17** | Đánh giá tài xế | Sau khi chuyến hoàn thành, khách hàng phải có thể đánh giá tài xế bằng điểm đánh giá và nhận xét. |
+| **AC18** | Tra cứu lịch sử | Nhân viên vận hành phải có thể tra cứu lịch sử chuyến xe và các giao dịch thanh toán đã phát sinh. |
+| **AC19** | Phân quyền | Người dùng chỉ được truy cập và thực hiện các chức năng phù hợp với vai trò và quyền hạn được cấp. |
+| **AC20** | Khả năng mở rộng | Hệ thống phải cho phép tích hợp thêm phương thức thanh toán, dịch vụ thông báo hoặc loại dịch vụ mới mà không phải thay đổi toàn bộ hệ thống. |
+
+# 14. Requirements Traceability Matrix – RTM
+
+| BC | BR | FR | UC | AC |
+|---|---|---|---|---|
+| Phân công tài xế thủ công | **BR01** – Đặt chuyến xe | FR01–FR05 – Nhập thông tin và tạo chuyến | **UC01** – Đặt chuyến xe | **AC01, AC02** |
+| Phân công tài xế thủ công | **BR03** – Tự động tìm tài xế | FR09–FR16 – Tìm và gửi yêu cầu nhận chuyến | **UC09** – Tìm và phân công tài xế | **AC04, AC05, AC07** |
+| Khó theo dõi chuyến đi | **BR07** – Theo dõi trạng thái chuyến | FR29–FR31 – Xem và cập nhật trạng thái | **UC02** – Theo dõi chuyến xe | **AC08** |
+| Khó theo dõi chuyến đi | **BR08** – Thực hiện chuyến xe | FR32–FR34 – Cập nhật trạng thái chuyến | **UC07** – Thực hiện chuyến xe | **AC09** |
+| Thanh toán chưa tập trung | **BR09** – Tính cước chuyến xe | FR35–FR36 – Tính và hiển thị cước | **UC10** – Tính cước chuyến xe | **AC10** |
+| Thanh toán chưa tập trung | **BR10** – Thanh toán chuyến xe | FR37–FR40 – Chọn và xử lý thanh toán | **UC08** – Thanh toán chuyến xe | **AC11, AC12** |
+| Khó quản lý vận hành | **BR05** – Quản lý tài xế | FR19–FR23 – Quản lý thông tin và trạng thái tài xế | **UC13** – Quản lý tài xế | **AC14** |
+| Khó quản lý vận hành | **BR06** – Quản lý khách hàng | FR24–FR28 – Quản lý thông tin khách hàng | **UC12** – Quản lý khách hàng | **AC13** |
+| Khó quản lý vận hành | **BR13** – Quản lý và giám sát vận hành | FR41–FR43 – Theo dõi và xử lý sự cố | **UC14** – Quản lý vận hành | **AC15** |
+| Khó theo dõi thông tin | **BR12** – Gửi thông báo | FR44–FR47 – Gửi thông báo | **UC11** – Gửi thông báo | **AC16** |
+| Cải thiện trải nghiệm khách hàng | **BR15** – Đánh giá tài xế | FR48–FR50 – Đánh giá và nhận xét | **UC04** – Đánh giá tài xế | **AC17** |
+| Khó quản lý vận hành | **BR14** – Quản lý lịch sử | FR51–FR52 – Tra cứu lịch sử | **UC16** – Tra cứu giao dịch | **AC18** |
+| Khó quản lý vận hành | **BR16** – Quản lý tài khoản và phân quyền | FR53–FR54 – Quản lý quyền truy cập | **UC20** – Quản lý tài khoản và phân quyền | **AC19** |
+| Khó mở rộng hệ thống | **BR17** – Tích hợp dịch vụ bên ngoài | FR55–FR56 – Tích hợp thanh toán và thông báo | **UC18** – Xử lý giao dịch thanh toán | **AC20** |
+| Khó mở rộng hệ thống | **BR18** – Khả năng mở rộng hệ thống | FR57–FR59 – Mở rộng dịch vụ và phương thức thanh toán | **UC18** – Xử lý giao dịch thanh toán | **AC20** |
