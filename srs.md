@@ -422,26 +422,28 @@ Bước 10: Xác định các yêu cầu phi chức năng
 
 Bước 11: vẽ và xác định các usecase(vd UC01 tên là customer ) xác định xem có bao nhiêu usecase 
 
-# 11. Use Case – Xác định các Use Case
 | Mã | Tên Use Case | Tác nhân chính |
 |---|---|---|
-| **UC01** | Đăng ký tài khoản | Khách hàng |
-| **UC02** | Đăng nhập | Khách hàng, Tài xế |
-| **UC03** | Cập nhật thông tin cá nhân | Khách hàng, Tài xế |
-| **UC04** | Quản lý phương tiện | Tài xế, Nhân viên vận hành |
-| **UC05** | Đặt chuyến xe | Khách hàng |
-| **UC06** | Nhận hoặc từ chối chuyến | Tài xế |
-| **UC07** | Theo dõi chuyến xe | Khách hàng |
-| **UC08** | Cập nhật trạng thái chuyến | Tài xế |
-| **UC09** | Thanh toán chuyến xe | Khách hàng, Cổng thanh toán |
-| **UC10** | Xử lý thanh toán thất bại | Khách hàng, Cổng thanh toán |
-| **UC11** | Xem lịch sử chuyến xe | Khách hàng |
-| **UC12** | Đánh giá tài xế | Khách hàng |
-| **UC13** | Quản lý khách hàng | Nhân viên vận hành |
-| **UC14** | Quản lý tài xế | Nhân viên vận hành |
-| **UC15** | Quản lý chuyến xe | Nhân viên vận hành |
-| **UC16** | Giám sát và xử lý sự cố chuyến xe | Nhân viên vận hành |
-| **UC17** | Xem báo cáo hoạt động | Nhân viên vận hành |
+| **UC01** | Đặt chuyến xe | Khách hàng |
+| **UC02** | Theo dõi chuyến xe | Khách hàng |
+| **UC03** | Hủy chuyến xe | Khách hàng |
+| **UC04** | Đánh giá tài xế | Khách hàng |
+| **UC05** | Nhận chuyến xe | Tài xế |
+| **UC06** | Cập nhật trạng thái chuyến | Tài xế |
+| **UC07** | Thực hiện chuyến xe | Tài xế |
+| **UC08** | Thanh toán chuyến xe | Khách hàng |
+| **UC09** | Tìm và phân công tài xế | Hệ thống |
+| **UC10** | Tính cước chuyến xe | Hệ thống |
+| **UC11** | Gửi thông báo | Hệ thống |
+| **UC12** | Quản lý khách hàng | Nhân viên vận hành |
+| **UC13** | Quản lý tài xế | Nhân viên vận hành |
+| **UC14** | Quản lý vận hành | Nhân viên vận hành |
+| **UC15** | Xử lý sự cố chuyến xe | Nhân viên vận hành |
+| **UC16** | Tra cứu giao dịch | Nhân viên vận hành |
+| **UC17** | Quản lý thanh toán | Nhân viên vận hành |
+| **UC18** | Xử lý giao dịch thanh toán | Cổng thanh toán |
+| **UC19** | Gửi thông báo bên ngoài | Dịch vụ thông báo |
+| **UC20** | Quản lý tài khoản và phân quyền | Nhân viên vận hành |
 
 ## 11.1. Actors
 
@@ -516,116 +518,666 @@ Bước 12: Đặc tả usecase
 
 ## UC01 – Đặt chuyến xe
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC01 |
-| **Tên Use Case** | Đặt chuyến xe |
-| **Tác nhân** | Khách hàng |
-| **Mục đích** | Cho phép khách hàng tạo yêu cầu đặt chuyến xe. |
-| **Điều kiện trước** | Khách hàng đã đăng nhập và hệ thống đang hoạt động. |
-| **Điều kiện sau** | Yêu cầu đặt chuyến được tạo và chuyển sang bước tìm tài xế. |
-| **Luồng chính** | 1. Khách hàng nhập điểm đón.<br>2. Khách hàng nhập điểm đến.<br>3. Khách hàng chọn thời gian đón.<br>4. Hệ thống kiểm tra thông tin.<br>5. Khách hàng xác nhận đặt chuyến.<br>6. Hệ thống tạo yêu cầu đặt chuyến.<br>7. Hệ thống chuyển yêu cầu sang chức năng tìm tài xế. |
-| **Luồng ngoại lệ** | Nếu thông tin không hợp lệ → hệ thống yêu cầu khách hàng nhập lại.<br>Nếu hệ thống không thể tạo yêu cầu → thông báo lỗi cho khách hàng. |
+| Thành phần         | Nội dung                                                         |
+| ------------------ | ---------------------------------------------------------------- |
+| **Mã UC**          | UC01                                                             |
+| **Tên**            | Đặt chuyến xe                                                    |
+| **Actor chính**    | Khách hàng                                                       |
+| **Mô tả**          | Cho phép khách hàng nhập thông tin và tạo yêu cầu đặt chuyến xe. |
+| **Tiền điều kiện** | Khách hàng đã đăng nhập và hệ thống đang hoạt động.              |
+| **Hậu điều kiện**  | Yêu cầu đặt xe được tạo và chuyển sang quá trình tìm tài xế.     |
+
+### Luồng chính
+
+| Bước | Actor                                                | Hệ thống                                                |
+| ---- | ---------------------------------------------------- | ------------------------------------------------------- |
+| 1    | Khách hàng nhập điểm đón, điểm đến và thời gian đón. |                                                         |
+| 2    |                                                      | Kiểm tra tính đầy đủ và hợp lệ của thông tin chuyến xe. |
+| 3    |                                                      | Hiển thị thông tin chuyến xe để khách hàng kiểm tra.    |
+| 4    | Khách hàng xác nhận đặt xe.                          |                                                         |
+| 5    |                                                      | Tạo yêu cầu đặt chuyến.                                 |
+| 6    |                                                      | Chuyển yêu cầu sang UC09 – Tìm và phân công tài xế.     |
+
+### Ngoại lệ
+
+| Trường hợp                        | Xử lý                                                  |
+| --------------------------------- | ------------------------------------------------------ |
+| Thông tin thiếu hoặc không hợp lệ | Hệ thống thông báo lỗi và yêu cầu khách hàng nhập lại. |
+| Hệ thống gặp lỗi                  | Hệ thống thông báo không thể tạo yêu cầu đặt chuyến.   |
+
+---
 
 ## UC02 – Theo dõi chuyến xe
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC02 |
-| **Tên Use Case** | Theo dõi chuyến xe |
-| **Tác nhân** | Khách hàng |
-| **Mục đích** | Cho phép khách hàng theo dõi trạng thái chuyến và thông tin tài xế. |
-| **Điều kiện trước** | Khách hàng có chuyến xe đang hoạt động. |
-| **Điều kiện sau** | Thông tin và trạng thái chuyến được hiển thị. |
-| **Luồng chính** | 1. Khách hàng mở chuyến xe.<br>2. Hệ thống lấy thông tin chuyến.<br>3. Hệ thống hiển thị trạng thái chuyến.<br>4. Nếu đã có tài xế, hệ thống hiển thị thông tin tài xế.<br>5. Hệ thống cập nhật trạng thái trong quá trình thực hiện chuyến. |
-| **Luồng ngoại lệ** | Nếu không có thông tin chuyến → thông báo không tìm thấy chuyến.<br>Nếu không có tài xế → hiển thị trạng thái đang tìm tài xế. |
+| Thành phần         | Nội dung                                                                      |
+| ------------------ | ----------------------------------------------------------------------------- |
+| **Mã UC**          | UC02                                                                          |
+| **Tên**            | Theo dõi chuyến xe                                                            |
+| **Actor chính**    | Khách hàng                                                                    |
+| **Mô tả**          | Cho phép khách hàng theo dõi trạng thái chuyến xe và thông tin tài xế.        |
+| **Tiền điều kiện** | Khách hàng có chuyến xe đang hoạt động.                                       |
+| **Hậu điều kiện**  | Khách hàng xem được trạng thái hiện tại và thông tin liên quan đến chuyến xe. |
+
+### Luồng chính
+
+| Bước | Actor                                       | Hệ thống                                                |
+| ---- | ------------------------------------------- | ------------------------------------------------------- |
+| 1    | Khách hàng mở chức năng theo dõi chuyến xe. |                                                         |
+| 2    |                                             | Lấy thông tin chuyến xe đang hoạt động của khách hàng.  |
+| 3    |                                             | Hiển thị trạng thái hiện tại của chuyến xe.             |
+| 4    |                                             | Hiển thị thông tin tài xế nếu chuyến đã được phân công. |
+| 5    |                                             | Cập nhật trạng thái chuyến xe theo quá trình thực hiện. |
+| 6    | Khách hàng theo dõi thông tin chuyến xe.    |                                                         |
+
+### Ngoại lệ
+
+| Trường hợp                        | Xử lý                                         |
+| --------------------------------- | --------------------------------------------- |
+| Không có chuyến xe đang hoạt động | Hệ thống thông báo không tìm thấy chuyến xe.  |
+| Chưa có tài xế                    | Hệ thống hiển thị trạng thái đang tìm tài xế. |
+| Không lấy được thông tin chuyến   | Hệ thống thông báo lỗi và ghi nhận log.       |
+
+---
+
 ## UC03 – Hủy chuyến xe
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC03 |
-| **Tên Use Case** | Hủy chuyến xe |
-| **Tác nhân** | Khách hàng |
-| **Mục đích** | Cho phép khách hàng hủy chuyến theo điều kiện nghiệp vụ. |
-| **Điều kiện trước** | Chuyến xe đang ở trạng thái có thể hủy. |
-| **Điều kiện sau** | Chuyến xe được cập nhật trạng thái hủy. |
-| **Luồng chính** | 1. Khách hàng chọn chuyến cần hủy.<br>2. Hệ thống kiểm tra trạng thái chuyến.<br>3. Khách hàng xác nhận hủy.<br>4. Hệ thống cập nhật chuyến thành đã hủy.<br>5. Hệ thống thông báo kết quả. |
-| **Luồng ngoại lệ** | Nếu chuyến không thể hủy → hệ thống thông báo và không thực hiện hủy. |
+| Thành phần         | Nội dung                                                                      |
+| ------------------ | ----------------------------------------------------------------------------- |
+| **Mã UC**          | UC03                                                                          |
+| **Tên**            | Hủy chuyến xe                                                                 |
+| **Actor chính**    | Khách hàng                                                                    |
+| **Mô tả**          | Cho phép khách hàng hủy chuyến xe khi chuyến đang ở trạng thái được phép hủy. |
+| **Tiền điều kiện** | Chuyến xe tồn tại và đang ở trạng thái có thể hủy.                            |
+| **Hậu điều kiện**  | Chuyến xe chuyển sang trạng thái Đã hủy và các bên liên quan được thông báo.  |
+
+### Luồng chính
+
+| Bước | Actor                                 | Hệ thống                                                            |
+| ---- | ------------------------------------- | ------------------------------------------------------------------- |
+| 1    | Khách hàng chọn chuyến xe cần hủy.    |                                                                     |
+| 2    | Khách hàng chọn chức năng Hủy chuyến. |                                                                     |
+| 3    |                                       | Kiểm tra trạng thái hiện tại của chuyến xe.                         |
+| 4    |                                       | Hiển thị thông tin xác nhận hủy chuyến.                             |
+| 5    | Khách hàng xác nhận hủy chuyến.       |                                                                     |
+| 6    |                                       | Cập nhật trạng thái chuyến xe thành Đã hủy.                         |
+| 7    |                                       | Gửi thông báo cho các bên liên quan thông qua UC11 – Gửi thông báo. |
+
+### Ngoại lệ
+
+| Trường hợp                        | Xử lý                                             |
+| --------------------------------- | ------------------------------------------------- |
+| Chuyến xe không còn được phép hủy | Hệ thống thông báo và không thực hiện hủy chuyến. |
+| Chuyến xe không tồn tại           | Hệ thống thông báo không tìm thấy chuyến xe.      |
+
+---
+
 ## UC04 – Đánh giá tài xế
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC04 |
-| **Tên Use Case** | Đánh giá tài xế |
-| **Tác nhân** | Khách hàng |
-| **Mục đích** | Cho phép khách hàng đánh giá tài xế sau chuyến đi. |
-| **Điều kiện trước** | Chuyến xe đã hoàn thành. |
-| **Điều kiện sau** | Đánh giá được lưu vào hệ thống. |
-| **Luồng chính** | 1. Khách hàng mở chuyến đã hoàn thành.<br>2. Chọn chức năng đánh giá.<br>3. Chọn mức điểm đánh giá.<br>4. Nhập nhận xét nếu có.<br>5. Gửi đánh giá.<br>6. Hệ thống lưu đánh giá. |
-| **Luồng ngoại lệ** | Nếu chuyến chưa hoàn thành → không cho phép đánh giá.<br>Nếu đánh giá không hợp lệ → yêu cầu nhập lại. |
+| Thành phần         | Nội dung                                                          |
+| ------------------ | ----------------------------------------------------------------- |
+| **Mã UC**          | UC04                                                              |
+| **Tên**            | Đánh giá tài xế                                                   |
+| **Actor chính**    | Khách hàng                                                        |
+| **Mô tả**          | Cho phép khách hàng đánh giá tài xế sau khi chuyến xe hoàn thành. |
+| **Tiền điều kiện** | Chuyến xe đã hoàn thành và khách hàng chưa đánh giá chuyến xe.    |
+| **Hậu điều kiện**  | Đánh giá và nhận xét được lưu vào hệ thống.                       |
+
+### Luồng chính
+
+| Bước | Actor                                  | Hệ thống                                         |
+| ---- | -------------------------------------- | ------------------------------------------------ |
+| 1    | Khách hàng mở chuyến xe đã hoàn thành. |                                                  |
+| 2    |                                        | Kiểm tra trạng thái chuyến xe và quyền đánh giá. |
+| 3    | Khách hàng chọn chức năng Đánh giá.    |                                                  |
+| 4    |                                        | Hiển thị biểu mẫu đánh giá.                      |
+| 5    | Khách hàng nhập số sao và nhận xét.    |                                                  |
+| 6    |                                        | Kiểm tra tính hợp lệ của dữ liệu đánh giá.       |
+| 7    |                                        | Lưu đánh giá và nhận xét vào hệ thống.           |
+| 8    |                                        | Thông báo đánh giá thành công.                   |
+
+### Ngoại lệ
+
+| Trường hợp                 | Xử lý                                       |
+| -------------------------- | ------------------------------------------- |
+| Chuyến xe chưa hoàn thành  | Hệ thống không cho phép đánh giá.           |
+| Điểm đánh giá không hợp lệ | Hệ thống thông báo lỗi và yêu cầu nhập lại. |
+| Khách hàng đã đánh giá     | Hệ thống không cho phép đánh giá lần nữa.   |
+
+---
 
 ## UC05 – Nhận chuyến xe
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC05 |
-| **Tên Use Case** | Nhận chuyến xe |
-| **Tác nhân** | Tài xế |
-| **Mục đích** | Cho phép tài xế nhận chuyến được hệ thống phân công. |
-| **Điều kiện trước** | Tài xế đang ở trạng thái Available và có yêu cầu chuyến. |
-| **Điều kiện sau** | Chuyến được phân công cho tài xế. |
-| **Luồng chính** | 1. Tài xế nhận yêu cầu chuyến.<br>2. Xem thông tin chuyến.<br>3. Chọn nhận chuyến.<br>4. Hệ thống kiểm tra trạng thái tài xế.<br>5. Hệ thống xác nhận tài xế nhận chuyến.<br>6. Thông báo cho khách hàng. |
-| **Luồng ngoại lệ** | Nếu tài xế đã nhận chuyến khác → không cho phép nhận.<br>Nếu chuyến đã được tài xế khác nhận → thông báo chuyến không còn khả dụng. |
+| Thành phần         | Nội dung                                                         |
+| ------------------ | ---------------------------------------------------------------- |
+| **Mã UC**          | UC05                                                             |
+| **Tên**            | Nhận chuyến xe                                                   |
+| **Actor chính**    | Tài xế                                                           |
+| **Mô tả**          | Cho phép tài xế xem và nhận yêu cầu chuyến xe phù hợp.           |
+| **Tiền điều kiện** | Tài xế đang ở trạng thái Available và có yêu cầu chuyến phù hợp. |
+| **Hậu điều kiện**  | Chuyến xe được xác nhận cho tài xế nhận.                         |
+
+### Luồng chính
+
+| Bước | Actor                           | Hệ thống                                                   |
+| ---- | ------------------------------- | ---------------------------------------------------------- |
+| 1    |                                 | Gửi yêu cầu chuyến xe đến tài xế phù hợp.                  |
+| 2    | Tài xế xem thông tin chuyến xe. |                                                            |
+| 3    | Tài xế chọn Nhận chuyến.        |                                                            |
+| 4    |                                 | Kiểm tra chuyến xe còn khả dụng.                           |
+| 5    |                                 | Xác nhận tài xế nhận chuyến và cập nhật trạng thái tài xế. |
+| 6    |                                 | Gửi thông báo xác nhận cho khách hàng.                     |
+
+### Ngoại lệ
+
+| Trường hợp                          | Xử lý                                                      |
+| ----------------------------------- | ---------------------------------------------------------- |
+| Tài xế không ở trạng thái Available | Hệ thống không cho phép nhận chuyến.                       |
+| Chuyến đã được tài xế khác nhận     | Hệ thống thông báo chuyến không còn khả dụng.              |
+| Tài xế không phản hồi               | Hệ thống hết thời gian chờ và chuyển sang tìm tài xế khác. |
+
+---
 
 ## UC06 – Cập nhật trạng thái chuyến
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC06 |
-| **Tên Use Case** | Cập nhật trạng thái chuyến |
-| **Tác nhân** | Tài xế |
-| **Mục đích** | Cho phép tài xế cập nhật trạng thái trong quá trình thực hiện chuyến. |
-| **Điều kiện trước** | Tài xế đã được phân công chuyến. |
-| **Điều kiện sau** | Trạng thái chuyến được cập nhật. |
-| **Luồng chính** | 1. Tài xế mở chuyến.<br>2. Cập nhật đã đến điểm đón.<br>3. Bắt đầu chuyến.<br>4. Thực hiện chuyến.<br>5. Cập nhật hoàn thành chuyến.<br>6. Hệ thống lưu trạng thái. |
-| **Luồng ngoại lệ** | Nếu trạng thái không hợp lệ → hệ thống không cho cập nhật và thông báo lỗi. |
+| Thành phần         | Nội dung                                                                  |
+| ------------------ | ------------------------------------------------------------------------- |
+| **Mã UC**          | UC06                                                                      |
+| **Tên**            | Cập nhật trạng thái chuyến                                                |
+| **Actor chính**    | Tài xế                                                                    |
+| **Mô tả**          | Cho phép tài xế cập nhật trạng thái chuyến trong quá trình thực hiện.     |
+| **Tiền điều kiện** | Tài xế đã được phân công cho chuyến xe.                                   |
+| **Hậu điều kiện**  | Trạng thái chuyến xe được cập nhật và khách hàng nhận được thông tin mới. |
+
+### Luồng chính
+
+| Bước | Actor                                       | Hệ thống                                                     |
+| ---- | ------------------------------------------- | ------------------------------------------------------------ |
+| 1    | Tài xế chọn chuyến đang thực hiện.          |                                                              |
+| 2    |                                             | Kiểm tra tài xế có được phân công cho chuyến hay không.      |
+| 3    | Tài xế cập nhật trạng thái Đã đến điểm đón. |                                                              |
+| 4    |                                             | Kiểm tra trạng thái có đúng trình tự và cập nhật trạng thái. |
+| 5    | Tài xế cập nhật trạng thái Bắt đầu chuyến.  |                                                              |
+| 6    |                                             | Kiểm tra và cập nhật trạng thái chuyến.                      |
+| 7    | Tài xế cập nhật trạng thái Hoàn thành.      |                                                              |
+| 8    |                                             | Kiểm tra và cập nhật trạng thái Hoàn thành.                  |
+| 9    |                                             | Gửi thông báo trạng thái mới cho khách hàng.                 |
+
+### Ngoại lệ
+
+| Trường hợp                     | Xử lý                                              |
+| ------------------------------ | -------------------------------------------------- |
+| Tài xế không được phân công    | Hệ thống từ chối cập nhật.                         |
+| Trạng thái không đúng trình tự | Hệ thống từ chối cập nhật và thông báo lỗi.        |
+| Dữ liệu cập nhật không hợp lệ  | Hệ thống yêu cầu nhập hoặc thực hiện lại thao tác. |
+
+---
 
 ## UC07 – Thực hiện chuyến xe
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC07 |
-| **Tên Use Case** | Thực hiện chuyến xe |
-| **Tác nhân** | Tài xế |
-| **Mục đích** | Cho phép tài xế thực hiện chuyến từ điểm đón đến điểm đến. |
-| **Điều kiện trước** | Tài xế đã nhận chuyến. |
-| **Điều kiện sau** | Chuyến được cập nhật hoàn thành hoặc xử lý sự cố. |
-| **Luồng chính** | 1. Tài xế di chuyển đến điểm đón.<br>2. Cập nhật đã đến.<br>3. Đón khách.<br>4. Bắt đầu chuyến.<br>5. Di chuyển đến điểm đến.<br>6. Kết thúc chuyến. |
-| **Luồng ngoại lệ** | Nếu xảy ra sự cố → tài xế báo sự cố và nhân viên vận hành tiếp nhận xử lý. |
+| Thành phần         | Nội dung                                                   |
+| ------------------ | ---------------------------------------------------------- |
+| **Mã UC**          | UC07                                                       |
+| **Tên**            | Thực hiện chuyến xe                                        |
+| **Actor chính**    | Tài xế                                                     |
+| **Mô tả**          | Cho phép tài xế thực hiện chuyến từ điểm đón đến điểm đến. |
+| **Tiền điều kiện** | Tài xế đã nhận và được phân công chuyến xe.                |
+| **Hậu điều kiện**  | Chuyến xe hoàn thành hoặc được ghi nhận sự cố.             |
+
+### Luồng chính
+
+| Bước | Actor                                       | Hệ thống                                                                  |
+| ---- | ------------------------------------------- | ------------------------------------------------------------------------- |
+| 1    | Tài xế nhận chuyến xe.                      |                                                                           |
+| 2    |                                             | Xác nhận tài xế được phân công và hiển thị thông tin chuyến.              |
+| 3    | Tài xế di chuyển đến điểm đón.              |                                                                           |
+| 4    | Tài xế cập nhật trạng thái Đã đến điểm đón. |                                                                           |
+| 5    |                                             | Cập nhật trạng thái chuyến và thông báo cho khách hàng.                   |
+| 6    | Tài xế đón khách và bắt đầu chuyến.         |                                                                           |
+| 7    |                                             | Cập nhật trạng thái Bắt đầu chuyến.                                       |
+| 8    | Tài xế di chuyển đến điểm đến.              |                                                                           |
+| 9    | Tài xế kết thúc chuyến.                     |                                                                           |
+| 10   |                                             | Cập nhật trạng thái Hoàn thành và chuyển sang UC10 – Tính cước chuyến xe. |
+
+### Ngoại lệ
+
+| Trường hợp                         | Xử lý                                     |
+| ---------------------------------- | ----------------------------------------- |
+| Có sự cố trong quá trình thực hiện | Chuyển sang UC15 – Xử lý sự cố chuyến xe. |
+| Không thể cập nhật trạng thái      | Hệ thống thông báo lỗi và ghi nhận log.   |
+
+---
+
 ## UC08 – Thanh toán chuyến xe
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC08 |
-| **Tên Use Case** | Thanh toán chuyến xe |
-| **Tác nhân** | Khách hàng, Cổng thanh toán |
-| **Mục đích** | Cho phép khách hàng thanh toán tiền chuyến xe. |
-| **Điều kiện trước** | Chuyến đã hoàn thành và có cước phí. |
-| **Điều kiện sau** | Thanh toán được ghi nhận thành công hoặc thất bại. |
-| **Luồng chính** | 1. Hệ thống hiển thị số tiền cần thanh toán.<br>2. Khách hàng chọn phương thức thanh toán.<br>3. Nếu tiền mặt → thanh toán cho tài xế và tài xế xác nhận.<br>4. Nếu điện tử → hệ thống gửi giao dịch đến cổng thanh toán.<br>5. Nhận kết quả giao dịch.<br>6. Cập nhật trạng thái thanh toán. |
-| **Luồng ngoại lệ** | Nếu thanh toán điện tử thất bại → thông báo lỗi và cho phép thanh toán lại hoặc chọn phương thức khác. |
+| Thành phần         | Nội dung                                                                           |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| **Mã UC**          | UC08                                                                               |
+| **Tên**            | Thanh toán chuyến xe                                                               |
+| **Actor chính**    | Khách hàng                                                                         |
+| **Mô tả**          | Cho phép khách hàng thanh toán cước chuyến bằng tiền mặt hoặc phương thức điện tử. |
+| **Tiền điều kiện** | Chuyến xe đã hoàn thành và có số tiền cước cần thanh toán.                         |
+| **Hậu điều kiện**  | Giao dịch thanh toán được ghi nhận với trạng thái tương ứng.                       |
+
+### Luồng chính
+
+| Bước | Actor                                                        | Hệ thống                                                  |
+| ---- | ------------------------------------------------------------ | --------------------------------------------------------- |
+| 1    |                                                              | Tính và hiển thị số tiền cần thanh toán.                  |
+| 2    | Khách hàng chọn phương thức thanh toán.                      |                                                           |
+| 3    | Nếu chọn tiền mặt, khách hàng thanh toán cho tài xế.         |                                                           |
+| 4    | Tài xế xác nhận đã nhận tiền.                                |                                                           |
+| 5    |                                                              | Ghi nhận thanh toán tiền mặt thành công.                  |
+| 6    | Nếu chọn thanh toán điện tử, khách hàng xác nhận thanh toán. |                                                           |
+| 7    |                                                              | Chuyển yêu cầu sang UC18 – Xử lý giao dịch thanh toán.    |
+| 8    |                                                              | Nhận kết quả giao dịch và cập nhật trạng thái thanh toán. |
+
+### Ngoại lệ
+
+| Trường hợp                                | Xử lý                                                                                       |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Thanh toán điện tử thất bại               | Hệ thống ghi nhận giao dịch thất bại và cho phép thanh toán lại hoặc chọn phương thức khác. |
+| Không nhận được kết quả thanh toán        | Hệ thống chuyển giao dịch sang trạng thái Pending.                                          |
+| Tài xế không xác nhận thanh toán tiền mặt | Hệ thống ghi nhận giao dịch chưa hoàn tất để xử lý.                                         |
+
+---
+
 ## UC09 – Tìm và phân công tài xế
 
-| Thành phần | Nội dung |
-|---|---|
-| **Mã Use Case** | UC09 |
-| **Tên Use Case** | Tìm và phân công tài xế |
-| **Tác nhân** | Hệ thống, Tài xế |
-| **Mục đích** | Tự động tìm tài xế phù hợp cho yêu cầu đặt chuyến. |
-| **Điều kiện trước** | Có yêu cầu đặt chuyến chưa được phân công. |
-| **Điều kiện sau** | Chuyến được phân công cho tài xế hoặc thông báo không tìm được tài xế. |
-| **Luồng chính** | 1. Hệ thống nhận yêu cầu đặt chuyến.<br>2. Tìm tài xế đang Available.<br>3. Ưu tiên tài xế phù hợp.<br>4. Gửi yêu cầu nhận chuyến.<br>5. Tài xế nhận chuyến.<br>6. Hệ thống xác nhận phân công.<br>7. Thông báo cho khách hàng. |
-| **Luồng ngoại lệ** | Tài xế từ chối/không phản hồi → tìm tài xế khác.<br>Không còn tài xế phù hợp → thông báo cho khách hàng. |
+| Thành phần         | Nội dung                                                                    |
+| ------------------ | --------------------------------------------------------------------------- |
+| **Mã UC**          | UC09                                                                        |
+| **Tên**            | Tìm và phân công tài xế                                                     |
+| **Actor chính**    | Hệ thống                                                                    |
+| **Mô tả**          | Tự động tìm tài xế phù hợp và phân công cho chuyến xe.                      |
+| **Tiền điều kiện** | Có yêu cầu đặt xe chưa được phân công tài xế.                               |
+| **Hậu điều kiện**  | Tài xế được phân công hoặc khách hàng được thông báo không tìm thấy tài xế. |
+
+### Luồng chính
+
+| Bước | Actor                    | Hệ thống                                              |
+| ---- | ------------------------ | ----------------------------------------------------- |
+| 1    |                          | Tiếp nhận yêu cầu đặt chuyến từ UC01.                 |
+| 2    |                          | Tìm các tài xế đang ở trạng thái Available.           |
+| 3    |                          | Lọc tài xế dựa trên các tiêu chí phù hợp.             |
+| 4    |                          | Xác định tài xế phù hợp nhất.                         |
+| 5    |                          | Gửi yêu cầu nhận chuyến cho tài xế.                   |
+| 6    | Tài xế chấp nhận chuyến. |                                                       |
+| 7    |                          | Kiểm tra và xác nhận tài xế nhận chuyến.              |
+| 8    |                          | Cập nhật thông tin phân công chuyến xe.               |
+| 9    |                          | Thông báo kết quả phân công cho khách hàng và tài xế. |
+
+### Ngoại lệ
+
+| Trường hợp                    | Xử lý                                                             |
+| ----------------------------- | ----------------------------------------------------------------- |
+| Tài xế từ chối                | Hệ thống tìm và gửi yêu cầu cho tài xế khác.                      |
+| Tài xế không phản hồi         | Hệ thống hết thời gian chờ và tìm tài xế khác.                    |
+| Không tìm thấy tài xế phù hợp | Hệ thống thông báo cho khách hàng và cập nhật trạng thái yêu cầu. |
+
+---
+
+## UC10 – Tính cước chuyến xe
+
+| Thành phần         | Nội dung                                                         |
+| ------------------ | ---------------------------------------------------------------- |
+| **Mã UC**          | UC10                                                             |
+| **Tên**            | Tính cước chuyến xe                                              |
+| **Actor chính**    | Hệ thống                                                         |
+| **Mô tả**          | Tự động tính tiền cước dựa trên thông tin chuyến và quy tắc giá. |
+| **Tiền điều kiện** | Chuyến xe đã hoàn thành.                                         |
+| **Hậu điều kiện**  | Tiền cước được tính và lưu vào thông tin chuyến xe.              |
+
+### Luồng chính
+
+| Bước | Actor | Hệ thống                                        |
+| ---- | ----- | ----------------------------------------------- |
+| 1    |       | Tiếp nhận thông tin chuyến xe đã hoàn thành.    |
+| 2    |       | Lấy các thông tin cần thiết để tính cước.       |
+| 3    |       | Xác định bảng giá và quy tắc tính cước áp dụng. |
+| 4    |       | Tính tiền cước chuyến xe.                       |
+| 5    |       | Lưu số tiền cước vào thông tin chuyến xe.       |
+| 6    |       | Hiển thị số tiền cước cho khách hàng.           |
+| 7    |       | Chuyển sang UC08 – Thanh toán chuyến xe.        |
+
+### Ngoại lệ
+
+| Trường hợp                   | Xử lý                                               |
+| ---------------------------- | --------------------------------------------------- |
+| Thiếu dữ liệu tính cước      | Hệ thống thông báo lỗi và ghi nhận để xử lý.        |
+| Không xác định được bảng giá | Hệ thống không thực hiện tính cước và ghi nhận lỗi. |
+
+---
+
+## UC11 – Gửi thông báo
+
+| Thành phần         | Nội dung                                                   |
+| ------------------ | ---------------------------------------------------------- |
+| **Mã UC**          | UC11                                                       |
+| **Tên**            | Gửi thông báo                                              |
+| **Actor chính**    | Hệ thống                                                   |
+| **Mô tả**          | Tạo và gửi thông báo khi phát sinh các sự kiện quan trọng. |
+| **Tiền điều kiện** | Có sự kiện cần thông báo và xác định được người nhận.      |
+| **Hậu điều kiện**  | Thông báo được gửi hoặc ghi nhận trạng thái gửi thất bại.  |
+
+### Luồng chính
+
+| Bước | Actor | Hệ thống                                         |
+| ---- | ----- | ------------------------------------------------ |
+| 1    |       | Phát hiện sự kiện cần gửi thông báo.             |
+| 2    |       | Xác định người nhận và loại thông báo.           |
+| 3    |       | Tạo nội dung thông báo.                          |
+| 4    |       | Gửi yêu cầu sang UC19 – Gửi thông báo bên ngoài. |
+| 5    |       | Nhận kết quả gửi thông báo.                      |
+| 6    |       | Ghi nhận trạng thái gửi thông báo.               |
+
+### Ngoại lệ
+
+| Trường hợp                     | Xử lý                                                |
+| ------------------------------ | ---------------------------------------------------- |
+| Không xác định được người nhận | Hệ thống ghi nhận lỗi và không gửi thông báo.        |
+| Gửi thông báo thất bại         | Hệ thống ghi log và thực hiện retry theo chính sách. |
+
+---
+
+## UC12 – Quản lý khách hàng
+
+| Thành phần         | Nội dung                                                                |
+| ------------------ | ----------------------------------------------------------------------- |
+| **Mã UC**          | UC12                                                                    |
+| **Tên**            | Quản lý khách hàng                                                      |
+| **Actor chính**    | Nhân viên vận hành                                                      |
+| **Mô tả**          | Cho phép nhân viên vận hành quản lý thông tin và trạng thái khách hàng. |
+| **Tiền điều kiện** | Nhân viên đã đăng nhập và có quyền quản lý khách hàng.                  |
+| **Hậu điều kiện**  | Thông tin khách hàng được thêm, cập nhật hoặc tra cứu thành công.       |
+
+### Luồng chính
+
+| Bước | Actor                                                   | Hệ thống                                            |
+| ---- | ------------------------------------------------------- | --------------------------------------------------- |
+| 1    | Nhân viên chọn chức năng Quản lý khách hàng.            |                                                     |
+| 2    |                                                         | Hiển thị danh sách và chức năng quản lý khách hàng. |
+| 3    | Nhân viên tìm kiếm hoặc chọn khách hàng.                |                                                     |
+| 4    |                                                         | Tìm kiếm và hiển thị thông tin khách hàng.          |
+| 5    | Nhân viên xem, thêm hoặc cập nhật thông tin khách hàng. |                                                     |
+| 6    |                                                         | Kiểm tra tính hợp lệ của dữ liệu.                   |
+| 7    |                                                         | Lưu thông tin thay đổi.                             |
+| 8    |                                                         | Thông báo kết quả thao tác.                         |
+
+### Ngoại lệ
+
+| Trường hợp                | Xử lý                                       |
+| ------------------------- | ------------------------------------------- |
+| Không tìm thấy khách hàng | Hệ thống thông báo không tìm thấy dữ liệu.  |
+| Dữ liệu không hợp lệ      | Hệ thống thông báo lỗi và yêu cầu nhập lại. |
+| Nhân viên không có quyền  | Hệ thống từ chối thao tác.                  |
+
+---
+
+## UC13 – Quản lý tài xế
+
+| Thành phần         | Nội dung                                                                          |
+| ------------------ | --------------------------------------------------------------------------------- |
+| **Mã UC**          | UC13                                                                              |
+| **Tên**            | Quản lý tài xế                                                                    |
+| **Actor chính**    | Nhân viên vận hành                                                                |
+| **Mô tả**          | Cho phép nhân viên quản lý thông tin, trạng thái và lịch sử hoạt động của tài xế. |
+| **Tiền điều kiện** | Nhân viên đã đăng nhập và có quyền quản lý tài xế.                                |
+| **Hậu điều kiện**  | Thông tin tài xế được thêm, cập nhật hoặc tra cứu thành công.                     |
+
+### Luồng chính
+
+| Bước | Actor                                          | Hệ thống                                             |
+| ---- | ---------------------------------------------- | ---------------------------------------------------- |
+| 1    | Nhân viên chọn chức năng Quản lý tài xế.       |                                                      |
+| 2    |                                                | Hiển thị danh sách tài xế và các chức năng quản lý.  |
+| 3    | Nhân viên tìm kiếm hoặc chọn tài xế.           |                                                      |
+| 4    |                                                | Hiển thị thông tin tài xế.                           |
+| 5    | Nhân viên thêm hoặc cập nhật thông tin tài xế. |                                                      |
+| 6    |                                                | Kiểm tra tính hợp lệ của dữ liệu.                    |
+| 7    |                                                | Lưu thông tin tài xế.                                |
+| 8    |                                                | Hiển thị trạng thái và lịch sử hoạt động của tài xế. |
+
+### Ngoại lệ
+
+| Trường hợp               | Xử lý                                      |
+| ------------------------ | ------------------------------------------ |
+| Không tìm thấy tài xế    | Hệ thống thông báo không tìm thấy dữ liệu. |
+| Thông tin không hợp lệ   | Hệ thống không lưu và yêu cầu chỉnh sửa.   |
+| Nhân viên không có quyền | Hệ thống từ chối thao tác.                 |
+
+---
+
+## UC14 – Quản lý vận hành
+
+| Thành phần         | Nội dung                                                                     |
+| ------------------ | ---------------------------------------------------------------------------- |
+| **Mã UC**          | UC14                                                                         |
+| **Tên**            | Quản lý vận hành                                                             |
+| **Actor chính**    | Nhân viên vận hành                                                           |
+| **Mô tả**          | Cho phép nhân viên giám sát các chuyến xe và hoạt động của tài xế.           |
+| **Tiền điều kiện** | Nhân viên đã đăng nhập và có quyền vận hành.                                 |
+| **Hậu điều kiện**  | Tình trạng vận hành được theo dõi và các vấn đề được xử lý hoặc chuyển tiếp. |
+
+### Luồng chính
+
+| Bước | Actor                                               | Hệ thống                                                       |
+| ---- | --------------------------------------------------- | -------------------------------------------------------------- |
+| 1    | Nhân viên mở màn hình quản lý vận hành.             |                                                                |
+| 2    |                                                     | Hiển thị danh sách các chuyến xe đang hoạt động.               |
+| 3    |                                                     | Hiển thị trạng thái và thông tin tài xế.                       |
+| 4    | Nhân viên theo dõi tình trạng vận hành.             |                                                                |
+| 5    | Nhân viên phát hiện vấn đề và chọn phương án xử lý. |                                                                |
+| 6    |                                                     | Thực hiện xử lý hoặc chuyển sang UC15 – Xử lý sự cố chuyến xe. |
+| 7    |                                                     | Ghi nhận kết quả xử lý.                                        |
+
+### Ngoại lệ
+
+| Trường hợp                   | Xử lý                                         |
+| ---------------------------- | --------------------------------------------- |
+| Không lấy được dữ liệu       | Hệ thống thông báo lỗi và ghi log.            |
+| Phát hiện sự cố nghiêm trọng | Hệ thống chuyển thông tin sang UC15 để xử lý. |
+
+---
+
+## UC15 – Xử lý sự cố chuyến xe
+
+| Thành phần         | Nội dung                                                               |
+| ------------------ | ---------------------------------------------------------------------- |
+| **Mã UC**          | UC15                                                                   |
+| **Tên**            | Xử lý sự cố chuyến xe                                                  |
+| **Actor chính**    | Nhân viên vận hành                                                     |
+| **Mô tả**          | Cho phép nhân viên tiếp nhận và xử lý sự cố phát sinh trong chuyến xe. |
+| **Tiền điều kiện** | Có sự cố được ghi nhận.                                                |
+| **Hậu điều kiện**  | Sự cố được xử lý và kết quả được lưu vào hệ thống.                     |
+
+### Luồng chính
+
+| Bước | Actor                                                       | Hệ thống                                                        |
+| ---- | ----------------------------------------------------------- | --------------------------------------------------------------- |
+| 1    | Nhân viên tiếp nhận thông tin sự cố.                        |                                                                 |
+| 2    |                                                             | Hiển thị thông tin sự cố và chuyến xe liên quan.                |
+| 3    | Nhân viên kiểm tra thông tin chuyến xe và tình trạng sự cố. |                                                                 |
+| 4    |                                                             | Cung cấp thông tin cần thiết để nhân viên xác định nguyên nhân. |
+| 5    | Nhân viên liên hệ các bên liên quan nếu cần.                |                                                                 |
+| 6    | Nhân viên thực hiện phương án xử lý.                        |                                                                 |
+| 7    |                                                             | Cập nhật trạng thái chuyến xe và thông tin sự cố.               |
+| 8    |                                                             | Lưu kết quả xử lý và thông báo cho các bên liên quan nếu cần.   |
+
+### Ngoại lệ
+
+| Trường hợp                 | Xử lý                                                               |
+| -------------------------- | ------------------------------------------------------------------- |
+| Không đủ thông tin         | Hệ thống yêu cầu bổ sung thông tin.                                 |
+| Sự cố nghiêm trọng         | Nhân viên chuyển cấp xử lý phù hợp và hệ thống ghi nhận trạng thái. |
+| Không thể cập nhật kết quả | Hệ thống thông báo lỗi và ghi log.                                  |
+
+---
+
+## UC16 – Tra cứu giao dịch
+
+| Thành phần         | Nội dung                                                         |
+| ------------------ | ---------------------------------------------------------------- |
+| **Mã UC**          | UC16                                                             |
+| **Tên**            | Tra cứu giao dịch                                                |
+| **Actor chính**    | Nhân viên vận hành                                               |
+| **Mô tả**          | Cho phép nhân viên tìm kiếm và xem lịch sử giao dịch thanh toán. |
+| **Tiền điều kiện** | Nhân viên đã đăng nhập và có quyền tra cứu giao dịch.            |
+| **Hậu điều kiện**  | Kết quả giao dịch phù hợp được hiển thị.                         |
+
+### Luồng chính
+
+| Bước | Actor                                     | Hệ thống                                    |
+| ---- | ----------------------------------------- | ------------------------------------------- |
+| 1    | Nhân viên mở chức năng Tra cứu giao dịch. |                                             |
+| 2    |                                           | Hiển thị biểu mẫu tìm kiếm.                 |
+| 3    | Nhân viên nhập điều kiện tìm kiếm.        |                                             |
+| 4    |                                           | Kiểm tra điều kiện tìm kiếm.                |
+| 5    |                                           | Tìm các giao dịch phù hợp.                  |
+| 6    |                                           | Hiển thị thông tin và trạng thái giao dịch. |
+| 7    | Nhân viên xem thông tin giao dịch.        |                                             |
+
+### Ngoại lệ
+
+| Trường hợp                      | Xử lý                                         |
+| ------------------------------- | --------------------------------------------- |
+| Không có giao dịch phù hợp      | Hệ thống thông báo không tìm thấy dữ liệu.    |
+| Điều kiện tìm kiếm không hợp lệ | Hệ thống yêu cầu nhập lại điều kiện tìm kiếm. |
+
+---
+
+## UC17 – Quản lý thanh toán
+
+| Thành phần         | Nội dung                                                                   |
+| ------------------ | -------------------------------------------------------------------------- |
+| **Mã UC**          | UC17                                                                       |
+| **Tên**            | Quản lý thanh toán                                                         |
+| **Actor chính**    | Nhân viên vận hành                                                         |
+| **Mô tả**          | Cho phép nhân viên theo dõi và quản lý trạng thái các khoản thanh toán.    |
+| **Tiền điều kiện** | Nhân viên đã đăng nhập và có quyền quản lý thanh toán.                     |
+| **Hậu điều kiện**  | Thông tin và trạng thái thanh toán được kiểm tra, đối chiếu hoặc cập nhật. |
+
+### Luồng chính
+
+| Bước | Actor                                              | Hệ thống                                             |
+| ---- | -------------------------------------------------- | ---------------------------------------------------- |
+| 1    | Nhân viên mở chức năng Quản lý thanh toán.         |                                                      |
+| 2    |                                                    | Hiển thị danh sách các khoản thanh toán.             |
+| 3    | Nhân viên tìm kiếm và chọn giao dịch cần kiểm tra. |                                                      |
+| 4    |                                                    | Hiển thị thông tin và trạng thái giao dịch.          |
+| 5    | Nhân viên đối chiếu kết quả thanh toán.            |                                                      |
+| 6    |                                                    | Kiểm tra thông tin và xác định trạng thái giao dịch. |
+| 7    | Nhân viên cập nhật thông tin nếu được phép.        |                                                      |
+| 8    |                                                    | Kiểm tra và lưu thay đổi.                            |
+
+### Ngoại lệ
+
+| Trường hợp                                 | Xử lý                                      |
+| ------------------------------------------ | ------------------------------------------ |
+| Không tìm thấy giao dịch                   | Hệ thống thông báo không tìm thấy dữ liệu. |
+| Giao dịch không hợp lệ hoặc không xác định | Hệ thống ghi nhận giao dịch để xử lý.      |
+| Nhân viên không có quyền cập nhật          | Hệ thống từ chối thao tác.                 |
+
+---
+
+## UC18 – Xử lý giao dịch thanh toán
+
+| Thành phần         | Nội dung                                                   |
+| ------------------ | ---------------------------------------------------------- |
+| **Mã UC**          | UC18                                                       |
+| **Tên**            | Xử lý giao dịch thanh toán                                 |
+| **Actor chính**    | Cổng thanh toán                                            |
+| **Mô tả**          | Tiếp nhận và xử lý yêu cầu thanh toán điện tử từ hệ thống. |
+| **Tiền điều kiện** | Có yêu cầu thanh toán điện tử hợp lệ từ hệ thống.          |
+| **Hậu điều kiện**  | Kết quả giao dịch được trả về hệ thống.                    |
+
+### Luồng chính
+
+| Bước | Actor                                                 | Hệ thống                                            |
+| ---- | ----------------------------------------------------- | --------------------------------------------------- |
+| 1    |                                                       | Gửi yêu cầu thanh toán điện tử đến cổng thanh toán. |
+| 2    | Cổng thanh toán tiếp nhận yêu cầu.                    |                                                     |
+| 3    |                                                       | Cổng thanh toán kiểm tra thông tin giao dịch.       |
+| 4    | Cổng thanh toán thực hiện xử lý thanh toán.           |                                                     |
+| 5    |                                                       | Cổng thanh toán xác định kết quả giao dịch.         |
+| 6    | Cổng thanh toán trả kết quả thành công hoặc thất bại. |                                                     |
+| 7    |                                                       | Tiếp nhận kết quả và cập nhật trạng thái giao dịch. |
+
+### Ngoại lệ
+
+| Trường hợp                       | Xử lý                                                      |
+| -------------------------------- | ---------------------------------------------------------- |
+| Thông tin giao dịch không hợp lệ | Cổng thanh toán từ chối giao dịch và trả kết quả thất bại. |
+| Giao dịch thất bại               | Hệ thống ghi nhận trạng thái thất bại.                     |
+| Không nhận được phản hồi         | Hệ thống chuyển giao dịch sang trạng thái Pending.         |
+
+---
+
+## UC19 – Gửi thông báo bên ngoài
+
+| Thành phần         | Nội dung                                                                   |
+| ------------------ | -------------------------------------------------------------------------- |
+| **Mã UC**          | UC19                                                                       |
+| **Tên**            | Gửi thông báo bên ngoài                                                    |
+| **Actor chính**    | Dịch vụ thông báo                                                          |
+| **Mô tả**          | Tiếp nhận yêu cầu từ hệ thống và gửi thông báo đến khách hàng hoặc tài xế. |
+| **Tiền điều kiện** | Có yêu cầu gửi thông báo hợp lệ.                                           |
+| **Hậu điều kiện**  | Thông báo được gửi hoặc trả về trạng thái thất bại.                        |
+
+### Luồng chính
+
+| Bước | Actor                                      | Hệ thống                                                    |
+| ---- | ------------------------------------------ | ----------------------------------------------------------- |
+| 1    |                                            | Gửi nội dung và thông tin người nhận đến dịch vụ thông báo. |
+| 2    | Dịch vụ thông báo tiếp nhận yêu cầu.       |                                                             |
+| 3    |                                            | Kiểm tra thông tin người nhận và nội dung thông báo.        |
+| 4    | Dịch vụ thông báo thực hiện gửi thông báo. |                                                             |
+| 5    |                                            | Tiếp nhận kết quả gửi thông báo.                            |
+| 6    |                                            | Lưu trạng thái gửi thông báo.                               |
+
+### Ngoại lệ
+
+| Trường hợp                        | Xử lý                                                                  |
+| --------------------------------- | ---------------------------------------------------------------------- |
+| Thông tin người nhận không hợp lệ | Dịch vụ thông báo trả kết quả thất bại.                                |
+| Dịch vụ gửi thông báo thất bại    | Trả trạng thái thất bại để hệ thống thực hiện retry.                   |
+| Dịch vụ thông báo không phản hồi  | Hệ thống ghi nhận trạng thái chưa xác định và xử lý theo cơ chế retry. |
+
+---
+
+## UC20 – Quản lý tài khoản và phân quyền
+
+| Thành phần         | Nội dung                                                                            |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| **Mã UC**          | UC20                                                                                |
+| **Tên**            | Quản lý tài khoản và phân quyền                                                     |
+| **Actor chính**    | Nhân viên vận hành                                                                  |
+| **Mô tả**          | Cho phép quản lý tài khoản người dùng và quyền truy cập các chức năng của hệ thống. |
+| **Tiền điều kiện** | Nhân viên đã đăng nhập và có quyền quản trị tài khoản.                              |
+| **Hậu điều kiện**  | Tài khoản hoặc quyền truy cập được tạo, cập nhật hoặc thay đổi thành công.          |
+
+### Luồng chính
+
+| Bước | Actor                                                   | Hệ thống                                              |
+| ---- | ------------------------------------------------------- | ----------------------------------------------------- |
+| 1    | Nhân viên mở chức năng Quản lý tài khoản và phân quyền. |                                                       |
+| 2    |                                                         | Kiểm tra quyền quản trị của nhân viên.                |
+| 3    |                                                         | Hiển thị danh sách tài khoản và chức năng quản lý.    |
+| 4    | Nhân viên tìm kiếm hoặc chọn tài khoản.                 |                                                       |
+| 5    |                                                         | Hiển thị thông tin tài khoản và quyền hiện tại.       |
+| 6    | Nhân viên thêm hoặc cập nhật thông tin tài khoản.       |                                                       |
+| 7    | Nhân viên gán hoặc thay đổi vai trò/quyền truy cập.     |                                                       |
+| 8    |                                                         | Kiểm tra tính hợp lệ của thông tin và quyền được gán. |
+| 9    |                                                         | Lưu thông tin tài khoản và quyền truy cập.            |
+| 10   |                                                         | Thông báo kết quả thao tác.                           |
+
+### Ngoại lệ
+
+| Trường hợp                        | Xử lý                                                  |
+| --------------------------------- | ------------------------------------------------------ |
+| Tài khoản không hợp lệ            | Hệ thống thông báo lỗi và yêu cầu chỉnh sửa.           |
+| Nhân viên không có quyền quản trị | Hệ thống từ chối thao tác.                             |
+| Quyền được gán không hợp lệ       | Hệ thống không lưu thay đổi và yêu cầu chọn lại quyền. |
+| Tài khoản đã tồn tại              | Hệ thống thông báo và yêu cầu kiểm tra lại thông tin.  |
 
 Bước 13: Những tiêu chí chấp nhận (AC) là tập hợp các điều kiện tính năng phải đáp ứng để giúp ng làm phần mềm xác định khi nào yêu cầu kết thúc và nghệm thu> Hãy thiết kế ra các AC
 ## 13. Acceptance Criteria – Tiêu chí chấp nhận
