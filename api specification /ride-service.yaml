@@ -1,1 +1,88 @@
 
+openapi: 3.0.0
+info:
+  title: API Vận hành Chuyến đi (Ride Service)
+  description: Tài xế nhận chuyến, cập nhật trạng thái và vị trí (FR06, FR19-FR23).
+  version: 1.0.0
+paths:
+  /api/rides/{rideId}/accept:
+    post:
+      summary: Tài xế nhận cuốc xe
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - driverId
+              properties:
+                driverId:
+                  type: string
+                  example: "DRV-1001"
+      responses:
+        '200':
+          description: Nhận chuyến thành công, ghi nhận phân công (AC05, AC06)
+        '409':
+          description: Cuốc xe đã có người nhận hoặc tài xế không ở trạng thái Available
+
+  /api/rides/{rideId}/status:
+    put:
+      summary: Cập nhật tiến trình chạy xe
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [ARRIVED_AT_PICKUP, IN_TRANSIT, COMPLETED]
+                  example: "ARRIVED_AT_PICKUP"
+      responses:
+        '200':
+          description: Cập nhật thành công (AC09)
+
+  /api/drivers/{driverId}/location:
+    put:
+      summary: Bắn tọa độ GPS liên tục về hệ thống
+      parameters:
+        - name: driverId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - lat
+                - lng
+              properties:
+                lat:
+                  type: number
+                  example: 10.8223
+                lng:
+                  type: number
+                  example: 106.6853
+      responses:
+        '200':
+          description: Đã lưu vết tọa độ
