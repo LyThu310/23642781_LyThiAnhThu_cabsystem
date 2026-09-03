@@ -1,0 +1,67 @@
+openapi: 3.0.0
+info:
+  title: API Thanh toán và Đánh giá (Payment & Review Service)
+  description: Xử lý giao dịch cước phí và nhận xét của khách hàng (FR24-FR28, FR36).
+  version: 1.0.0
+paths:
+  /api/payments:
+    post:
+      summary: Thanh toán cước phí chuyến đi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rideId
+                - paymentMethod
+                - amount
+              properties:
+                rideId:
+                  type: string
+                  example: "BK-987654"
+                paymentMethod:
+                  type: string
+                  enum: [CASH, E_WALLET, CREDIT_CARD]
+                  example: "E_WALLET"
+                amount:
+                  type: number
+                  example: 55000
+      responses:
+        '200':
+          description: Giao dịch thanh toán thành công (AC11)
+        '402':
+          description: Thanh toán điện tử thất bại (AC12)
+
+  /api/rides/{rideId}/reviews:
+    post:
+      summary: Đánh giá tài xế
+      parameters:
+        - name: rideId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 5
+                comment:
+                  type: string
+                  example: "Tài xế thân thiện, đúng giờ."
+      responses:
+        '201':
+          description: Lưu đánh giá thành công (AC17)
+        '403':
+          description: Không thể đánh giá do chuyến chưa hoàn thành
