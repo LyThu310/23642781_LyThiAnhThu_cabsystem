@@ -1,1 +1,66 @@
 
+openapi: 3.0.0
+info:
+  title: API Quản lý Đặt xe (Booking Service)
+  description: Xử lý yêu cầu đặt chuyến, hủy chuyến và theo dõi của khách hàng (FR08-FR18).
+  version: 1.0.0
+paths:
+  /api/bookings:
+    post:
+      summary: Đặt chuyến xe mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pickupLocation
+                - destination
+                - vehicleType
+              properties:
+                pickupLocation:
+                  type: string
+                  example: "12 Nguyễn Văn Bảo, Gò Vấp"
+                destination:
+                  type: string
+                  example: "Chợ Bến Thành"
+                vehicleType:
+                  type: string
+                  enum: [BIKE, CAR_4_SEATS, CAR_7_SEATS]
+                  example: "CAR_4_SEATS"
+      responses:
+        '201':
+          description: Tạo chuyến xe thành công, hệ thống bắt đầu tìm tài xế (AC01, AC04)
+        '400':
+          description: Thiếu hoặc sai thông tin đặt chuyến (AC02)
+
+  /api/bookings/{bookingId}/cancel:
+    put:
+      summary: Hủy chuyến xe đang chờ
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Hủy chuyến thành công (AC03)
+        '403':
+          description: Trạng thái hiện tại không được phép hủy
+
+  /api/bookings/{bookingId}/tracking:
+    get:
+      summary: Theo dõi vị trí và trạng thái chuyến
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Trả về trạng thái chuyến và thông tin tài xế (AC08)
+        '404':
+          description: Không tìm thấy tài xế (AC07)
