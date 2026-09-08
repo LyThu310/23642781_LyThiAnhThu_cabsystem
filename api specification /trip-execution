@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: CAB System - Trip Execution API
+  version: 1.0.0
+  description: Trip status execution. Covers FR19-FR22 and AC09.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Trip Execution
+
+paths:
+  /trips/{tripId}/status:
+    patch:
+      tags:
+        - Trip Execution
+      summary: Cập nhật trạng thái thực hiện chuyến
+      operationId: updateTripStatus
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripStatusUpdateRequest'
+      responses:
+        '200':
+          description: Cập nhật trạng thái thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripStatusResponse'
+        '400':
+          description: Trạng thái hoặc thứ tự chuyển trạng thái không hợp lệ
+        '404':
+          description: Không tìm thấy chuyến
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    TripStatusUpdateRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - DRIVER_ARRIVED
+            - PASSENGER_PICKED_UP
+            - IN_PROGRESS
+            - COMPLETED
+
+    TripStatusResponse:
+      type: object
+      properties:
+        tripId:
+          type: string
+        status:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
