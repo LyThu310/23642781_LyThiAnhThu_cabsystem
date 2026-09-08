@@ -1,0 +1,431 @@
+openapi: 3.0.3
+info:
+  title: CAB System - Administration API
+  version: 1.0.0
+  description: Operations management. Covers FR37-FR43 and AC13-AC15, AC18.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Administration
+
+paths:
+  /admin/customers:
+    get:
+      tags:
+        - Administration
+      summary: Tìm kiếm và xem khách hàng
+      operationId: adminListCustomers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Danh sách khách hàng
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        '403':
+          description: Không có quyền truy cập
+
+    post:
+      tags:
+        - Administration
+      summary: Thêm khách hàng
+      operationId: adminCreateCustomer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '201':
+          description: Thêm khách hàng thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: Dữ liệu không hợp lệ
+
+  /admin/customers/{customerId}:
+    get:
+      tags:
+        - Administration
+      summary: Xem thông tin khách hàng
+      operationId: adminGetCustomer
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CustomerId'
+      responses:
+        '200':
+          description: Thông tin khách hàng
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Không tìm thấy khách hàng
+
+    patch:
+      tags:
+        - Administration
+      summary: Cập nhật khách hàng
+      operationId: adminUpdateCustomer
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CustomerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdateRequest'
+      responses:
+        '200':
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Không tìm thấy khách hàng
+
+  /admin/drivers:
+    get:
+      tags:
+        - Administration
+      summary: Xem và tìm kiếm tài xế
+      operationId: adminListDrivers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - AVAILABLE
+              - BUSY
+              - OFFLINE
+      responses:
+        '200':
+          description: Danh sách tài xế
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Driver'
+
+    post:
+      tags:
+        - Administration
+      summary: Thêm tài xế
+      operationId: adminCreateDriver
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverRequest'
+      responses:
+        '201':
+          description: Thêm tài xế thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: Dữ liệu không hợp lệ
+
+  /admin/drivers/{driverId}:
+    patch:
+      tags:
+        - Administration
+      summary: Cập nhật thông tin tài xế
+      operationId: adminUpdateDriver
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DriverId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverUpdateRequest'
+      responses:
+        '200':
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '404':
+          description: Không tìm thấy tài xế
+
+  /admin/vehicles:
+    get:
+      tags:
+        - Administration
+      summary: Xem danh sách phương tiện
+      operationId: adminListVehicles
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Danh sách phương tiện
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+
+  /admin/trips:
+    get:
+      tags:
+        - Administration
+      summary: Quản lý và giám sát chuyến
+      operationId: adminListTrips
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Danh sách chuyến
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trip'
+
+  /admin/trips/{tripId}/incident:
+    post:
+      tags:
+        - Administration
+      summary: Ghi nhận kết quả xử lý chuyến bị lỗi
+      operationId: recordTripIncident
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TripId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncidentRequest'
+      responses:
+        '201':
+          description: Ghi nhận sự cố thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+
+  /admin/payments:
+    get:
+      tags:
+        - Administration
+      summary: Tra cứu lịch sử giao dịch thanh toán
+      operationId: adminListPayments
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Danh sách giao dịch thanh toán
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    CustomerId:
+      name: customerId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    DriverId:
+      name: driverId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    TripId:
+      name: tripId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    CustomerRequest:
+      type: object
+      required:
+        - fullName
+        - phone
+      properties:
+        fullName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+
+    CustomerUpdateRequest:
+      type: object
+      minProperties: 1
+      properties:
+        fullName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+
+    Customer:
+      allOf:
+        - $ref: '#/components/schemas/CustomerRequest'
+        - type: object
+          properties:
+            id:
+              type: string
+
+    DriverRequest:
+      type: object
+      required:
+        - fullName
+        - phone
+      properties:
+        fullName:
+          type: string
+        phone:
+          type: string
+        status:
+          type: string
+          enum:
+            - AVAILABLE
+            - BUSY
+            - OFFLINE
+
+    DriverUpdateRequest:
+      type: object
+      minProperties: 1
+      properties:
+        fullName:
+          type: string
+        phone:
+          type: string
+        status:
+          type: string
+          enum:
+            - AVAILABLE
+            - BUSY
+            - OFFLINE
+
+    Driver:
+      allOf:
+        - $ref: '#/components/schemas/DriverRequest'
+        - type: object
+          properties:
+            id:
+              type: string
+
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: string
+        plateNumber:
+          type: string
+        vehicleType:
+          type: string
+
+    Trip:
+      type: object
+      properties:
+        id:
+          type: string
+        customerId:
+          type: string
+        driverId:
+          type: string
+          nullable: true
+        status:
+          type: string
+
+    IncidentRequest:
+      type: object
+      required:
+        - description
+        - resolution
+      properties:
+        description:
+          type: string
+        resolution:
+          type: string
+
+    Incident:
+      allOf:
+        - $ref: '#/components/schemas/IncidentRequest'
+        - type: object
+          properties:
+            id:
+              type: string
+            tripId:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        tripId:
+          type: string
+        amount:
+          type: number
+          format: double
+        status:
+          type: string
