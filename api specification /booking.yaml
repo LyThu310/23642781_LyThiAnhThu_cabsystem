@@ -1,65 +1,178 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: API Quản lý Đặt xe (Booking Service)
-  description: Xử lý yêu cầu đặt chuyến, hủy chuyến và theo dõi của khách hàng (FR08-FR18).
+  title: CAB System - Trip Booking API
   version: 1.0.0
+  description: Booking and trip tracking. Covers FR08-FR11, FR16-FR18, FR34-FR35 and AC01-AC03, AC08.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Trips
+
 paths:
-  /api/bookings:
+  /trips:
     post:
-      summary: Đặt chuyến xe mới
+      tags:
+        - Trips
+      summary: Tạo yêu cầu đặt xe
+      operationId: createTrip
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - pickupLocation
-                - destination
-                - vehicleType
-              properties:
-                pickupLocation:
-                  type: string
-                  example: "12 Nguyễn Văn Bảo, Gò Vấp"
-                destination:
-                  type: string
-                  example: "Chợ Bến Thành"
-                vehicleType:
-                  type: string
-                  enum: [BIKE, CAR_4_SEATS, CAR_7_SEATS]
-                  example: "CAR_4_SEATS"
+              $ref: '#/components/schemas/CreateTripRequest'
       responses:
         '201':
-          description: Tạo chuyến xe thành công, hệ thống bắt đầu tìm tài xế (AC01, AC04)
+          description: Tạo chuyến thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
         '400':
-          description: Thiếu hoặc sai thông tin đặt chuyến (AC02)
+          description: Thiếu hoặc sai thông tin đặt chuyến
 
-  /api/bookings/{bookingId}/cancel:
-    put:
-      summary: Hủy chuyến xe đang chờ
-      parameters:
-        - name: bookingId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Hủy chuyến thành công (AC03)
-        '403':
-          description: Trạng thái hiện tại không được phép hủy
-
-  /api/bookings/{bookingId}/tracking:
+  /trips/{tripId}:
     get:
-      summary: Theo dõi vị trí và trạng thái chuyến
+      tags:
+        - Trips
+      summary: Xem chi tiết và theo dõi chuyến
+      operationId: getTrip
+      security:
+        - bearerAuth: []
       parameters:
-        - name: bookingId
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/TripId'
       responses:
         '200':
-          description: Trả về trạng thái chuyến và thông tin tài xế (AC08)
+          description: Chi tiết chuyến
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripDetail'
         '404':
-          description: Không tìm thấy tài xế (AC07)
+          description: Không tìm thấy chuyến
+
+  /trips/{tripId}/cancel:
+    post:
+      tags:
+        - Trips
+      summary: Hủy chuyến
+      description: Chức năng này xuất hiện trong AC03.
+      operationId: cancelTrip
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TripId'
+      responses:
+        '200':
+          description: Hủy chuyến thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '400':
+          description: Trạng thái chuyến không cho phép hủy
+        '404':
+          description: Không tìm thấy chuyến
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    TripId:
+      name: tripId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    GeoPoint:
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        address:
+          type: string
+          example: 12 Nguyen Van Bao, Go Vap, Ho Chi Minh City
+        latitude:
+          type: number
+          format: double
+          example: 10.827
+        longitude:
+          type: number
+          format: double
+          example: 106.678
+
+    CreateTripRequest:
+      type: object
+      required:
+        - pickup
+        - destination
+        - vehicleType
+      properties:
+        pickup:
+          $ref: '#/components/schemas/GeoPoint'
+        destination:
+          $ref: '#/components/schemas/GeoPoint'
+        vehicleType:
+          type: string
+          enum:
+            - CAR
+            - MOTORBIKE
+        pickupTime:
+          type: string
+          format: date-time
+          nullable: true
+
+    Trip:
+      type: object
+      properties:
+        id:
+          type: string
+          example: TRIP001
+        customerId:
+          type: string
+          example: CUS001
+        driverId:
+          type: string
+          nullable: true
+          example: DRV001
+        status:
+          type: string
+          enum:
+            - SEARCHING_DRIVER
+            - DRIVER_ASSIGNED
+            - DRIVER_ARRIVED
+            - PASSENGER_PICKED_UP
+            - IN_PROGRESS
+            - COMPLETED
+            - CANCELLED
+            - NO_DRIVER_FOUND
+        fare:
+          type: number
+          format: double
+          nullable: true
+          example: 85000
+
+    TripDetail:
+      allOf:
+        - $ref: '#/components/schemas/Trip'
+        - type: object
+          properties:
+            driverName:
+              type: string
+              nullable: true
+              example: Tran Van B
+            estimatedArrivalMinutes:
+              type: integer
+              nullable: true
+              example: 8
