@@ -1,0 +1,137 @@
+openapi: 3.0.3
+info:
+  title: CAB System - Dispatch API
+  version: 1.0.0
+  description: Driver search and assignment. Covers FR12-FR15 and AC04-AC07.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Dispatch
+
+paths:
+  /trips/{tripId}/dispatch:
+    post:
+      tags:
+        - Dispatch
+      summary: Tìm và phân công tài xế
+      operationId: dispatchDriver
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TripId'
+      responses:
+        '200':
+          description: Đã tìm hoặc phân công tài xế
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatchResult'
+        '404':
+          description: Không tìm thấy chuyến
+
+  /drivers/me/trip-requests:
+    get:
+      tags:
+        - Dispatch
+      summary: Xem yêu cầu nhận chuyến
+      operationId: getTripRequests
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Danh sách yêu cầu nhận chuyến
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripDispatchRequest'
+
+  /drivers/me/trip-requests/{requestId}/accept:
+    post:
+      tags:
+        - Dispatch
+      summary: Nhận chuyến
+      operationId: acceptTrip
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      responses:
+        '200':
+          description: Nhận chuyến thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatchResult'
+        '409':
+          description: Yêu cầu đã hết hạn hoặc không còn hợp lệ
+
+  /drivers/me/trip-requests/{requestId}/reject:
+    post:
+      tags:
+        - Dispatch
+      summary: Từ chối chuyến
+      operationId: rejectTrip
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      responses:
+        '200':
+          description: Từ chối chuyến thành công
+        '409':
+          description: Yêu cầu đã hết hạn hoặc không còn hợp lệ
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    TripId:
+      name: tripId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    RequestId:
+      name: requestId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    TripDispatchRequest:
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: REQ001
+        tripId:
+          type: string
+          example: TRIP001
+        expiresAt:
+          type: string
+          format: date-time
+
+    DispatchResult:
+      type: object
+      properties:
+        tripId:
+          type: string
+        driverId:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+            - SEARCHING_DRIVER
+            - DRIVER_ASSIGNED
+            - NO_DRIVER_FOUND
