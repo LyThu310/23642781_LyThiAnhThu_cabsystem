@@ -1,0 +1,141 @@
+openapi: 3.0.3
+info:
+  title: CAB System - Reports API
+  version: 1.0.0
+  description: Operational reports. Covers FR46-FR50.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Reports
+
+paths:
+  /admin/reports/trips:
+    get:
+      tags:
+        - Reports
+      summary: Báo cáo số lượng chuyến
+      operationId: getTripCountReport
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Báo cáo số lượng chuyến
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripCountReport'
+
+  /admin/reports/revenue:
+    get:
+      tags:
+        - Reports
+      summary: Báo cáo doanh thu
+      operationId: getRevenueReport
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Báo cáo doanh thu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevenueReport'
+
+  /admin/reports/completion-rate:
+    get:
+      tags:
+        - Reports
+      summary: Báo cáo tỷ lệ chuyến hoàn thành
+      operationId: getCompletionRateReport
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Báo cáo tỷ lệ hoàn thành
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateReport'
+
+  /admin/reports/cancellation-rate:
+    get:
+      tags:
+        - Reports
+      summary: Báo cáo tỷ lệ chuyến hủy
+      operationId: getCancellationRateReport
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Báo cáo tỷ lệ hủy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateReport'
+
+  /admin/reports/driver-performance:
+    get:
+      tags:
+        - Reports
+      summary: Báo cáo hiệu quả hoạt động tài xế
+      operationId: getDriverPerformanceReport
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Báo cáo hiệu quả tài xế
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriverPerformance'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    TripCountReport:
+      type: object
+      properties:
+        totalTrips:
+          type: integer
+          example: 1200
+
+    RevenueReport:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+          format: double
+          example: 125000000
+        currency:
+          type: string
+          example: VND
+
+    RateReport:
+      type: object
+      properties:
+        rate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          example: 92.5
+
+    DriverPerformance:
+      type: object
+      properties:
+        driverId:
+          type: string
+        completedTrips:
+          type: integer
+        completionRate:
+          type: number
+          format: double
