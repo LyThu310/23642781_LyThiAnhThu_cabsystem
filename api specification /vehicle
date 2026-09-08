@@ -1,0 +1,160 @@
+openapi: 3.0.3
+info:
+  title: CAB System - Vehicle API
+  version: 1.0.0
+  description: Vehicle management. Covers FR07.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Vehicles
+
+paths:
+  /vehicles:
+    get:
+      tags:
+        - Vehicles
+      summary: Xem danh sách phương tiện
+      operationId: listVehicles
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Danh sách phương tiện
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+
+    post:
+      tags:
+        - Vehicles
+      summary: Thêm phương tiện
+      operationId: createVehicle
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+      responses:
+        '201':
+          description: Thêm phương tiện thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '400':
+          description: Dữ liệu không hợp lệ
+        '409':
+          description: Biển số xe đã tồn tại
+
+  /vehicles/{vehicleId}:
+    get:
+      tags:
+        - Vehicles
+      summary: Xem thông tin phương tiện
+      operationId: getVehicle
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/VehicleId'
+      responses:
+        '200':
+          description: Thông tin phương tiện
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '404':
+          description: Không tìm thấy phương tiện
+
+    patch:
+      tags:
+        - Vehicles
+      summary: Cập nhật phương tiện
+      operationId: updateVehicle
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/VehicleId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleUpdateRequest'
+      responses:
+        '200':
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '404':
+          description: Không tìm thấy phương tiện
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    VehicleId:
+      name: vehicleId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    VehicleRequest:
+      type: object
+      required:
+        - plateNumber
+        - vehicleType
+      properties:
+        plateNumber:
+          type: string
+          example: 51A-12345
+        vehicleType:
+          type: string
+          enum:
+            - CAR
+            - MOTORBIKE
+        brand:
+          type: string
+          example: Toyota
+        model:
+          type: string
+          example: Vios
+
+    VehicleUpdateRequest:
+      type: object
+      minProperties: 1
+      properties:
+        vehicleType:
+          type: string
+          enum:
+            - CAR
+            - MOTORBIKE
+        brand:
+          type: string
+        model:
+          type: string
+
+    Vehicle:
+      allOf:
+        - $ref: '#/components/schemas/VehicleRequest'
+        - type: object
+          properties:
+            id:
+              type: string
+              example: VEH001
