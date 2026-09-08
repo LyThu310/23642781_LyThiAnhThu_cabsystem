@@ -1,0 +1,120 @@
+openapi: 3.0.3
+info:
+  title: CAB System - Access Control and Audit API
+  version: 1.0.0
+  description: Access control and audit logs. Covers FR44-FR45 and AC19.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Access Control
+  - name: Audit Logs
+
+paths:
+  /admin/access/roles:
+    get:
+      tags:
+        - Access Control
+      summary: Xem danh sách vai trò và quyền
+      operationId: listRoles
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Danh sách vai trò
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+
+  /admin/access/users/{userId}/role:
+    put:
+      tags:
+        - Access Control
+      summary: Gán vai trò cho người dùng
+      operationId: assignRole
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRoleRequest'
+      responses:
+        '200':
+          description: Gán vai trò thành công
+        '403':
+          description: Không có quyền thực hiện
+
+  /admin/audit-logs:
+    get:
+      tags:
+        - Audit Logs
+      summary: Xem nhật ký thao tác
+      operationId: getAuditLogs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Danh sách nhật ký
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Role:
+      type: object
+      properties:
+        name:
+          type: string
+          example: OPERATIONS_STAFF
+        permissions:
+          type: array
+          items:
+            type: string
+
+    AssignRoleRequest:
+      type: object
+      required:
+        - role
+      properties:
+        role:
+          type: string
+          enum:
+            - CUSTOMER
+            - DRIVER
+            - OPERATIONS_STAFF
+            - MANAGEMENT
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        action:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
