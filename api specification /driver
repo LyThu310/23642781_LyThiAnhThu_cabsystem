@@ -1,0 +1,161 @@
+openapi: 3.0.3
+info:
+  title: CAB System - Driver API
+  version: 1.0.0
+  description: Driver profile, status and location. Covers FR04-FR06, FR23.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Drivers
+
+paths:
+  /drivers/me:
+    get:
+      tags:
+        - Drivers
+      summary: Xem thông tin tài xế
+      operationId: getDriverProfile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Thông tin tài xế
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '401':
+          description: Chưa xác thực
+
+    patch:
+      tags:
+        - Drivers
+      summary: Cập nhật thông tin tài xế
+      operationId: updateDriverProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverProfileUpdate'
+      responses:
+        '200':
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: Dữ liệu không hợp lệ
+
+  /drivers/me/status:
+    patch:
+      tags:
+        - Drivers
+      summary: Cập nhật trạng thái hoạt động
+      operationId: updateDriverStatus
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverStatusRequest'
+      responses:
+        '200':
+          description: Cập nhật trạng thái thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: Trạng thái không hợp lệ
+
+  /drivers/me/location:
+    put:
+      tags:
+        - Drivers
+      summary: Cập nhật vị trí tài xế
+      operationId: updateDriverLocation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverLocationRequest'
+      responses:
+        '200':
+          description: Cập nhật vị trí thành công
+        '400':
+          description: Tọa độ không hợp lệ
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    DriverStatus:
+      type: string
+      enum:
+        - AVAILABLE
+        - BUSY
+        - OFFLINE
+
+    DriverStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/DriverStatus'
+
+    DriverLocationRequest:
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+
+    DriverProfileUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        fullName:
+          type: string
+        phone:
+          type: string
+
+    Driver:
+      type: object
+      properties:
+        id:
+          type: string
+          example: DRV001
+        fullName:
+          type: string
+          example: Tran Van B
+        phone:
+          type: string
+          example: "0912345678"
+        status:
+          $ref: '#/components/schemas/DriverStatus'
